@@ -1,0 +1,12 @@
+*flymake*
+.DS_Store
+/.bundle
+/.rbenv*
+/.rvm*
+/.ssh
+/.vagrant
+/Gemfile.lock
+/bin
+/iso
+/ring
+/vendor
