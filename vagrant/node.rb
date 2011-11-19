@@ -1,1 +1,1 @@
-6.times { |n| box "node#{n}" }
+(1..6).each { |n| box "node#{n}" }
