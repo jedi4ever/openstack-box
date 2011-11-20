@@ -6,4 +6,5 @@ run_list( "role[node]",
           "recipe[nova::api]",
           "recipe[nova::network]",
           "recipe[nova::objectstore]",
-          "recipe[nova::scheduler]" )
+          "recipe[nova::scheduler]",
+          "recipe[nova::volume]" )
