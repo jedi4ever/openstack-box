@@ -1,12 +1,6 @@
-include_recipe "apt"
+include_recipe "glance::apt"
 
-apt_repository "openstack-glance" do
-  keyserver "keyserver.ubuntu.com"
-  key "2085FE8D"
-  uri "http://ppa.launchpad.net/glance-core/trunk/ubuntu"
-  distribution node["lsb"]["codename"]
-  components ["main"]
-  action :add
+package "glance" do
+  options "--force-yes -o Dpkg::Options::=\"--force-confdef\""
+  action :install
 end
-
-package "glance"
