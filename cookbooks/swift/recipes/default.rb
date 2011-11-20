@@ -1,4 +1,5 @@
 include_recipe "swift::apt"
+include_recipe "swift::rsync"
 
 package "swift"
 
