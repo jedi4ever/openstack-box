@@ -42,7 +42,6 @@ rbenv version
         #+BEGIN_SRC: sh
 
 git flow init
-git flow feature start collectd
 
         #+END_SRC
 
