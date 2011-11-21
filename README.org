@@ -60,8 +60,8 @@ export PATH=`pwd`/bin:$PATH
 
     #+BEGIN_SRC: sh
 
-veewee basebox build natty32
-veewee basebox export natty32
+vagrant basebox build natty32
+vagrant basebox export natty32
 vagrant box add natty32 natty32.box
 
     #+END_SRC
