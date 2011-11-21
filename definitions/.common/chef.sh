@@ -20,9 +20,8 @@ apt-get -y install chef-server
 # Cleanup
 for x in chef-client chef-server-webui chef-server chef-expander chef-solr \
     rabbitmq-server couchdb ; do
-    update-rc.d -f $x remove &
-    invoke-rc.d $x stop &
-    wait
+    update-rc.d -f $x remove
+    invoke-rc.d $x stop
 done
 chown -R chef:chef /etc/chef /var/lib/chef /var/log/chef
 chown -R rabbitmq:rabbitmq /etc/rabbitmq /var/lib/rabbitmq /var/log/rabbitmq
