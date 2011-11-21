@@ -1,0 +1,226 @@
+#+TITLE:   OpenStack Install Tutorial
+#+AUTHOR:  Tim Dysinger
+#+EMAIL:   tim@dysinger.net
+#+DATE:    November 21, 2011
+#+STARTUP: odd showall hidestars hideblocks
+
+* Setup
+
+*** VirtualBox
+
+    [[http://www.virtualbox.org]]
+
+*** Ruby
+
+    [[http://rbenv.org/]]
+
+    #+BEGIN_SRC: sh
+
+rbenv versions
+ruby-build 1.9.3-p0 ~/.rbenv/versions/ruby-1.9.3-p0
+rbenv global 1.9.3-p0
+which gem
+gem update --system
+gem cleanup
+gem install bundler rake
+ruby-build 1.8.7-p352 ~/.rbenv/versions/ruby-1.8.7-p352
+rbenv local 1.8.7-p352
+rbenv version
+
+    #+END_SRC
+
+*** Git
+
+    [[http://git-scm.com/]]
+
+***** Git Flow
+
+      [[https://github.com/nvie/gitflow]]
+
+******* Initialize
+
+        #+BEGIN_SRC: sh
+
+git flow init
+git flow feature start collectd
+
+        #+END_SRC
+
+*** Bundler
+
+    #+BEGIN_SRC: sh
+
+bundle install --path vendor/bundle --binstubs
+export PATH=`pwd`/bin:$PATH
+
+    #+END_SRC
+
+* Vagrant
+
+*** Veewee
+
+    #+BEGIN_SRC: sh
+
+veewee basebox build natty32
+veewee basebox export natty32
+veewee box add natty32 natty32.box
+
+    #+END_SRC
+
+*** Launch
+
+    Launch two natty32 nodes
+
+    #+BEGIN_SRC: sh
+
+vagrant up chef
+vagrant up node0
+
+    #+END_SRC
+
+* Knife
+
+*** Nodes
+
+    #+BEGIN_SRC: sh
+
+knife node list
+knife node show chef
+knife search node "name:node*"
+knife node run_list add ...
+
+    #+END_SRC
+
+*** Search
+
+    #+BEGIN_SRC: sh
+
+knife search --help
+knife search node "name:node*" -a prv
+
+    #+END_SRC
+
+*** Cookbooks
+
+    #+BEGIN_SRC: sh
+
+knife cookbook --help
+
+    #+END_SRC
+
+*** Roles
+
+    #+BEGIN_SRC: sh
+
+knife role --help
+
+    #+END_SRC
+
+*** Databags
+
+    #+BEGIN_SRC: sh
+
+knife data bag --help
+
+    #+END_SRC
+
+*** SSH
+
+    #+BEGIN_SRC: sh
+
+knife ssh --help
+knife ssh "*:*" "sudo chef-client" \
+    -a prv -x vagrant -i .ssh/id_rsa --no-host-key-verify
+
+    #+END_SRC
+
+* Collectd
+
+  Start a git flow feature branch for your work
+
+  #+BEGIN_SRC: sh
+
+git flow feature start collectd
+
+  #+END_SRC
+
+  Install collectd cookbooks from opscode
+
+  #+BEGIN_SRC: sh
+
+knife cookbook site install collectd -B feature/collectd
+knife cookbook site install collectd_plugins -B feature/collectd
+
+  #+END_SRC
+
+  Edit collectd server & client recipes to use 'prv' address.
+
+  Add collectd to run_list for nodes & reprovision
+
+  #+BEGIN_SRC: sh
+
+vagrant provision chef
+knife node run_list add chef "recipe[collectd::server]"
+knife ssh "name:chef" "sudo chef-client" \
+    -a prv -x vagrant -i .ssh/id_rsa --no-host-key-verify
+
+knife node run_list add node "recipe[collectd::client]"
+knife node run_list add node "recipe[collectd_plugins::default]"
+knife ssh "name:node" "sudo chef-client" \
+    -a prv -x vagrant -i .ssh/id_rsa --no-host-key-verify
+
+  #+END_SRC
+
+* Swift
+
+  Single node swift
+
+  #+BEGIN_SRC: sh
+
+vagrant up swift
+
+knife ssh "role:swift_storage" \
+    "sudo /vagrant/scripts/swift_xfs.sh" \
+    -a prv -x vagrant -i .ssh/id_rsa --no-host-key-verify
+
+knife ssh "role:swift_proxy" \
+    "sudo /vagrant/scripts/swift_solo_ring.sh" \
+    -a prv -x vagrant -i .ssh/id_rsa --no-host-key-verify
+
+knife ssh "role:swift_proxy or role:swift_storage" \
+    "sudo swift-init all reload" \
+    -a prv -x vagrant -i .ssh/id_rsa --no-host-key-verify
+
+knife ssh "role:swift_proxy" \
+    "sudo /vagrant/scripts/swift_bench.sh" \
+    -a prv -x vagrant -i .ssh/id_rsa --no-host-key-verify
+
+  #+END_SRC
+
+  Multi node swift
+
+  #+BEGIN_SRC: sh
+
+vagrant up swift-proxy
+vagrant up swift-storage1
+vagrant up swift-storage2
+vagrant up swift-storage3
+vagrant up swift-storage4
+
+knife ssh "role:swift_storage" \
+    "sudo /vagrant/scripts/swift_xfs.sh" \
+    -a prv -x vagrant -i .ssh/id_rsa --no-host-key-verify
+
+knife ssh "role:swift_proxy" \
+    "sudo /vagrant/scripts/swift_ring.sh" \
+    -a prv -x vagrant -i .ssh/id_rsa --no-host-key-verify
+
+knife ssh "role:swift_proxy or role:swift_storage" \
+    "sudo swift-init all reload" \
+    -a prv -x vagrant -i .ssh/id_rsa --no-host-key-verify
+
+knife ssh "role:swift_proxy" \
+    "sudo /vagrant/scripts/swift_bench.sh" \
+    -a prv -x vagrant -i .ssh/id_rsa --no-host-key-verify
+
+  #+END_SRC
