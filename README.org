@@ -73,7 +73,7 @@ vagrant box add natty32 natty32.box
     #+BEGIN_SRC: sh
 
 vagrant up chef
-vagrant up node0
+vagrant up node1
 
     #+END_SRC
 
