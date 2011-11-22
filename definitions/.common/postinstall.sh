@@ -1,5 +1,5 @@
 # Apt
-apt-get -y update
+apt-get update
 apt-get -y upgrade
 
 # Sudo
