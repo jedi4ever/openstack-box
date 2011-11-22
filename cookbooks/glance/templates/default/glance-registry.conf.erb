@@ -24,7 +24,7 @@ backlog = 4096
 # SQLAlchemy connection string for the reference implementation
 # registry server. Any valid SQLAlchemy connection string is fine.
 # See: http://www.sqlalchemy.org/docs/05/reference/sqlalchemy/connections.html#sqlalchemy.create_engine
-sql_connection = mysql://<%= node.glance.mysql.user %>:<%= node.glance.mysql.password %>@<%= node.glance.mysql.host %>/<%= node.glance.mysql.database %>
+sql_connection = <%= node.glance.sql_connection %>
 
 # Period in seconds after which SQLAlchemy should reestablish its connection
 # to the database.
