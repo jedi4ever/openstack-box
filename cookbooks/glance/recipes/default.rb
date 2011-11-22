@@ -9,7 +9,7 @@ include_recipe "glance::mysql"
 
 service "glance-registry"
 
-template "/etc/nova/glance-registry.conf" do
+template "/etc/glance/glance-registry.conf" do
   owner "root"
   group "root"
   mode 0644
