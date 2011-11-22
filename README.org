@@ -215,7 +215,7 @@ knife ssh "role:swift_proxy" \
     -a prv -x vagrant -i .ssh/id_rsa --no-host-key-verify
 
 knife ssh "role:swift_proxy or role:swift_storage" \
-    "sudo swift-init all reload" \
+    "sudo rsync -vauc /vagrant/ring/ /etc/swift/ && sudo swift-init all reload" \
     -a prv -x vagrant -i .ssh/id_rsa --no-host-key-verify
 
 knife ssh "role:swift_proxy" \
