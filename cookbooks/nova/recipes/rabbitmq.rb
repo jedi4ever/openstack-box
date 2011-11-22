@@ -2,7 +2,6 @@ include_recipe "rabbitmq"
 
 service "rabbitmq-server" do
   action [:enable, :start]
-  only_if "/etc/init.d/rabbitmq-server status | grep no_nodes_running"
 end
 
 rabbitmq_vhost node.nova.rabbitmq.vhost do
