@@ -48,7 +48,10 @@ when "debian", "ubuntu"
     key "http://www.rabbitmq.com/rabbitmq-signing-key-public.asc"
     action :add
   end
-  package "rabbitmq-server"
+  package "rabbitmq-server" do
+    options "--force-yes -o Dpkg::Options::=\"--force-confdef\""
+    action [:install, :upgrade]
+  end
 when "redhat", "centos", "scientific"
   remote_file "/tmp/rabbitmq-server-2.6.1-1.noarch.rpm" do
     source "https://www.rabbitmq.com/releases/rabbitmq-server/v2.6.1/rabbitmq-server-2.6.1-1.noarch.rpm"
