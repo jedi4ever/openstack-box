@@ -1,28 +1,19 @@
 include_recipe "mysql::server"
 
+mysql_connection = {
+  :host => "localhost",
+  :username => "root",
+  :password => node.mysql.server_root_password
+}
+
 mysql_database node.nova.mysql.database do
-  connection({ :host => "localhost",
-               :username => "root",
-               :password => node.mysql.server_root_password })
+  connection mysql_connection
   action :create
 end
 
-execute "mysql-install-nova-privileges" do
-  command "/usr/bin/mysql -u root -p#{node.mysql.server_root_password} <\
-           /etc/mysql/nova-grants.sql"
-  action :nothing
-end
-
-template "/etc/mysql/nova-grants.sql" do
-  path "/etc/mysql/nova-grants.sql"
-  source "grants.sql.erb"
-  owner "root"
-  group "root"
-  mode "0600"
-  variables( :user     => node.nova.mysql.user,
-             :password => node.nova.mysql.password,
-             :database => node.nova.mysql.database )
-  notifies( :run,
-            resources(:execute => "mysql-install-nova-privileges"),
-            :immediately )
+mysql_database_user node.nova.mysql.user do
+  connection mysql_connection
+  database_name node.nova.mysql.database
+  password node.nova.mysql.password
+  action [:create, :grant]
 end
