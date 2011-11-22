@@ -2,8 +2,6 @@ include_recipe "nova::apt"
 
 package "nova-common"
 
-package "iscsitarget-dkms"
-
 package "euca2ools"
 package "unzip"
 
