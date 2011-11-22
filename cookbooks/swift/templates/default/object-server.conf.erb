@@ -1,0 +1,13 @@
+[DEFAULT]
+
+[pipeline:main]
+pipeline = object-server
+
+[app:object-server]
+use = egg:swift#object
+
+[object-auditor]
+
+[object-replicator]
+
+[object-updater]

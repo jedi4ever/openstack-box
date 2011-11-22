@@ -1,0 +1,15 @@
+[DEFAULT]
+
+[pipeline:main]
+pipeline = account-server
+
+[app:account-server]
+use = egg:swift#account
+
+[account-auditor]
+
+[account-reaper]
+
+[account-replicator]
+
+[account-stats]

@@ -1,0 +1,30 @@
+[DEFAULT]
+bind_ip = <%= node.swift.proxy.bind_ip %>
+bind_port = <%= node.swift.proxy.bind_port %>
+workers = <%= node.swift.proxy.workers %>
+
+[pipeline:main]
+pipeline = catch_errors healthcheck cache ratelimit swauth proxy-server
+
+[filter:catch_errors]
+use = egg:swift#catch_errors
+
+[filter:healthcheck]
+use = egg:swift#healthcheck
+
+[filter:cache]
+use = egg:swift#memcache
+memcache_servers = <%= node.swift.proxy.memcache_servers %>
+
+[filter:ratelimit]
+use = egg:swift#ratelimit
+
+[filter:swauth]
+use = egg:swauth#swauth
+default_swift_cluster = local<%= "##{node.swift.proxy.cluster_address}/v1" %>
+super_admin_key = <%= node.swift.super_admin_key  %>
+
+[app:proxy-server]
+use = egg:swift#proxy
+allow_account_management = true
+account_autocreate = true
